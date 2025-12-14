@@ -40,7 +40,6 @@ jobs:
           path: ansible-cicd-springboot/roles/deploy_app/files
 
       - name: Normalize JAR filename
-        shell: bash
         run: |
           cd ansible-cicd-springboot/roles/deploy_app/files
           JAR=$(ls *.jar | head -n1)
@@ -50,7 +49,6 @@ jobs:
           mv "$JAR" springboot-app.jar
 
       - name: Configure SSH for Ansible
-        shell: bash
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
