@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]   # adjust to your branch
+    branches: [ "main" ]   # adjust if needed
 
 jobs:
   build:
