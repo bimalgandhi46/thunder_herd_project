@@ -2,14 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main" ]   # adjust as needed
+    branches: [ "main" ]   # adjust to your branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./   # root has your Spring Boot app (pom.xml)
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -46,7 +43,6 @@ jobs:
         shell: bash
         run: |
           cd ansible-cicd-springboot/roles/deploy_app/files
-          # pick the first jar found, rename to springboot-app.jar to match app_jar var
           JAR=$(ls *.jar | head -n1)
           if [ -z "$JAR" ]; then
             echo "No JAR downloaded"; exit 1
@@ -64,3 +60,7 @@ jobs:
       - name: Run Ansible deploy
         working-directory: ansible-cicd-springboot
         run: ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
+
+      - name: Post-deploy health check
+        working-directory: ansible-cicd-springboot
+        run: ansible-playbook -i inventory/hosts.yml playbooks/health.yml
