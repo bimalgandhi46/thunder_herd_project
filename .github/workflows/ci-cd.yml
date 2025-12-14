@@ -34,7 +34,7 @@ jobs:
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
       ANSIBLE_VAULT_PASSWORD: ${{ secrets.ANSIBLE_VAULT_PASSWORD }}
-      INVENTORY_REPO: your-org/ansible-infra   # replace with your infra repo name
+      INVENTORY_REPO: bimalgandhi46/ansible-cicd-springboot-   # ✅ your repo
     steps:
       - name: Download build artifact
         uses: actions/download-artifact@v4
