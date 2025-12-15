@@ -74,4 +74,7 @@ jobs:
           pwd
           ls -R ansible-cicd-springboot
 
-      # 7. Run Ansible
+      # 7. Run Ansible Playbook (from repo root so ansible.cfg is picked up)
+      - name: Run Ansible Playbook
+        working-directory: ansible-cicd-springboot
+        run: ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
