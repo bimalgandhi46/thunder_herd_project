@@ -38,12 +38,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: springboot-jar
-          path: ansible-cicd-springboot/roles/deploy_app/files
+          path: ./jar
 
-      - name: Rename JAR
+      - name: Move JAR into role files
         run: |
-          mv ansible-cicd-springboot/roles/deploy_app/files/*.jar \
-             ansible-cicd-springboot/roles/deploy_app/files/springboot-app.jar
+          mkdir -p ansible-cicd-springboot/roles/deploy_app/files
+          mv ./jar/*.jar ansible-cicd-springboot/roles/deploy_app/files/springboot-app.jar
 
       - name: List files before Ansible
         run: ls -lh ansible-cicd-springboot/roles/deploy_app/files/
@@ -53,7 +53,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Dynamically add all hosts from inventory to known_hosts
+          # Add all hosts from inventory to known_hosts
           for host in $(grep ansible_host ansible-cicd-springboot/inventory/hosts.yml | awk '{print $2}'); do
             ssh-keyscan -H $host >> ~/.ssh/known_hosts
           done
