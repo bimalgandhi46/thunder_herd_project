@@ -48,7 +48,17 @@ jobs:
       - name: List files before Ansible
         run: ls -lh ansible-cicd-springboot/roles/deploy_app/files/
 
-      - name: Set up Ansible
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Dynamically add all hosts from inventory to known_hosts
+          for host in $(grep ansible_host ansible-cicd-springboot/inventory/hosts.yml | awk '{print $2}'); do
+            ssh-keyscan -H $host >> ~/.ssh/known_hosts
+          done
+
+      - name: Install Ansible
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
