@@ -38,7 +38,7 @@ jobs:
       - name: Checkout Ansible repo
         uses: actions/checkout@v4
         with:
-          repository: bimalgandhi46/ansible-cicd-springboot   # <-- replace with your actual repo name
+          repository: bimalgandhi46/ansible-cicd-springboot-   # <-- replace with your actual repo name
           path: ansible-cicd-springboot
 
       - name: Download artifact
