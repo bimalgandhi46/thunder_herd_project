@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Setup SSH key from GitHub secret
       - name: Setup SSH key
         run: |
           set -x
@@ -20,22 +22,26 @@ jobs:
           printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
+      # Add known hosts from your inventory
       - name: Add known hosts
         run: |
           for host in $(grep ansible_host inventory/hosts.yml | awk '{print $2}'); do
             ssh-keyscan -H $host >> ~/.ssh/known_hosts
           done
 
+      # Verify the SSH key file looks correct
       - name: Verify SSH key file
         run: |
           ls -l ~/.ssh/id_rsa
           head -5 ~/.ssh/id_rsa
 
+      # Install Ansible on the runner
       - name: Install Ansible
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
 
+      # Run your Ansible playbook
       - name: Run Ansible playbook
         run: |
           ansible-playbook -i inventory/hosts.yml playbook.yml
