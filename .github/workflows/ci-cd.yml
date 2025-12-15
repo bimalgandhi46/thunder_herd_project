@@ -76,4 +76,4 @@ jobs:
       # Run Ansible playbook
       - name: Run Ansible playbook
         run: |
-          ansible-playbook -i inventory/hosts.yml playbook/deploy.yml
+          ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
