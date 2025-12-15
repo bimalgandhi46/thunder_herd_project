@@ -56,16 +56,4 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          for host in $(grep ansible_host inventory/hosts.yml | awk '{print $2}'); do
-            ssh-keyscan -H $host >> ~/.ssh/known_hosts
-          done
-
-      - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
-
-      - name: Run Ansible playbook
-        working-directory: ansible-cicd-springboot
-        run: |
-          ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
+          for host in $(grep
