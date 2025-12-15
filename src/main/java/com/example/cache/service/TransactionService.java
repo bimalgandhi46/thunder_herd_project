@@ -25,7 +25,7 @@ public class TransactionService {
 	    }
 
 	    public Transactions getTransactionById(Long id) {
-	        return repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
+	         return repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
 	    }
 
 	    public Page<Transactions> getByDomain(String domain, Pageable pageable) {
