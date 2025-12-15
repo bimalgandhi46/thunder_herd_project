@@ -11,22 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout thunder_herd_project (Spring Boot source)
       - name: Checkout thunder_herd_project
         uses: actions/checkout@v4
 
-      # 2. Set up JDK
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Build Spring Boot JAR
-      - name: Build with Maven
+      - name: Build Spring Boot JAR
         run: mvn clean package -DskipTests
 
-      # 4. Upload JAR artifact
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
@@ -38,17 +34,20 @@ jobs:
     needs: build
 
     steps:
-      # 1. Checkout thunder_herd_project (for context, not used in deploy)
       - name: Checkout thunder_herd_project
         uses: actions/checkout@v4
 
-      # 2. Checkout ansible-cicd-springb00t repo (where playbooks live)
-      - name: Checkout ansible-cicd-springboot-
-        uses: actions/checkout@v4
-        with:
-          repository: bimalgandhi46/ansible-cicd-springboot-
-          path: ansible-cicd-springboot-
-          token: ${{ secrets.SSH_PRIVATE_KEY }}
+      # 1. Set up SSH key for private repo access
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      # 2. Clone ansible-cicd-springb00t using SSH
+      - name: Clone ansible-cicd-springboot-
+        run: git clone git@github.com:bimalgandhi46/ansible-cicd-springboot-.git
 
       # 3. Download JAR artifact into Ansible role
       - name: Download JAR artifact
