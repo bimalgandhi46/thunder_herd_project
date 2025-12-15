@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
-      - name: Checkout repository
+      # 1. Checkout thunder_herd_project (Spring Boot source)
+      - name: Checkout thunder_herd_project
         uses: actions/checkout@v4
 
       # 2. Set up JDK
@@ -26,7 +26,7 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Upload artifact
+      # 4. Upload JAR artifact
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
@@ -38,30 +38,37 @@ jobs:
     needs: build
 
     steps:
-      # 1. Checkout repo
-      - name: Checkout repository
+      # 1. Checkout thunder_herd_project (for context, not used in deploy)
+      - name: Checkout thunder_herd_project
         uses: actions/checkout@v4
 
-      # 2. Download artifact
+      # 2. Checkout ansible-cicd-springb00t repo (where playbooks live)
+      - name: Checkout ansible-cicd-springboot-
+        uses: actions/checkout@v4
+        with:
+          repository: bimalgandhi46/ansible-cicd-springboot-
+          path: ansible-cicd-springboot-
+          token: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      # 3. Download JAR artifact into Ansible role
       - name: Download JAR artifact
         uses: actions/download-artifact@v4
         with:
           name: springboot-app
-          path: roles/deploy_app/files/
+          path: ansible-cicd-springboot-/roles/deploy_app/files/
 
-      # 3. Install Ansible
+      # 4. Install Ansible
       - name: Install Ansible
         run: |
           sudo apt-get update
           sudo apt-get install -y ansible
 
-      # 4. Debug workspace
+      # 5. Debug workspace
       - name: Debug workspace
         run: |
           pwd
           ls -R
 
-      # 5. Run Ansible Playbook
+      # 6. Run Ansible Playbook
       - name: Run Ansible Playbook
-        run: ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
-        working-directory: ${{ github.workspace }}
+        run: ansible-playbook -i ansible-cicd-springboot-/inventory/hosts.yml ansible-cicd-springboot-/playbooks/deploy.yml
