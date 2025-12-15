@@ -60,7 +60,7 @@ jobs:
         working-directory: ansible-cicd-springboot-
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KE }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           for host in $(grep ansible_host inventory/hosts.yml | awk '{print $2}'); do
             ssh-keyscan -H $host >> ~/.ssh/known_hosts
