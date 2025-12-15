@@ -46,8 +46,8 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       # 2. Clone ansible-cicd-springb00t using SSH
-      - name: Clone ansible-cicd-springboot-
-        run: git clone git@github.com:bimalgandhi46/ansible-cicd-springboot-.git
+      - name: Clone ansible-cicd-springboot
+        run: git clone git@github.com:bimalgandhi46/ansible-cicd-springboot.git
 
       # 3. Download JAR artifact into Ansible role
       - name: Download JAR artifact
@@ -70,4 +70,4 @@ jobs:
 
       # 6. Run Ansible Playbook
       - name: Run Ansible Playbook
-        run: ansible-playbook -i ansible-cicd-springboot-/inventory/hosts.yml ansible-cicd-springboot-/playbooks/deploy.yml
+        run: ansible-playbook -i ansible-cicd-springboot/inventory/hosts.yml ansible-cicd-springboot/playbooks/deploy.yml
