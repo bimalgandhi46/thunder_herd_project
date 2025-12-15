@@ -17,7 +17,6 @@ jobs:
       # Setup SSH key from GitHub secret
       - name: Setup SSH key
         run: |
-          set -x
           mkdir -p ~/.ssh
           printf "%s\n" "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
@@ -33,7 +32,12 @@ jobs:
       - name: Verify SSH key file
         run: |
           ls -l ~/.ssh/id_rsa
-          head -5 ~/.ssh/id_rsa
+          file ~/.ssh/id_rsa
+
+      # Debug: list all files in the repo
+      - name: List repository files
+        run: |
+          ls -R
 
       # Install Ansible on the runner
       - name: Install Ansible
