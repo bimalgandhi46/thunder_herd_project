@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI Pipeline
 
 on:
   push:
@@ -26,55 +26,25 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
-      # 4. Upload JAR artifact
-      - name: Upload JAR artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: springboot-app
-          path: target/*.jar
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-
-    steps:
-      # 1. Checkout thunder_herd_project (for context, not used in deploy)
-      - name: Checkout thunder_herd_project
+      # 4. Checkout ansible-cicd-springboot repo
+      - name: Checkout ansible-cicd-springboot
         uses: actions/checkout@v4
-
-      # 2. Set up SSH key for private repo access
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes"
-
-      # 3. Clone ansible-cicd-springboot repo
-      - name: Clone ansible-cicd-springboot
-        run: git clone git@github.com:bimalgandhi46/ansible-cicd-springboot.git
-
-      # 4. Download JAR artifact into Ansible role
-      - name: Download JAR artifact
-        uses: actions/download-artifact@v4
         with:
-          name: springboot-app
-          path: ansible-cicd-springboot/roles/deploy_app/files/
+          repository: bimalgandhi46/ansible-cicd-springboot
+          path: ansible-cicd-springboot
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      # 5. Install Ansible
-      - name: Install Ansible
+      # 5. Copy JAR into deploy_app role
+      - name: Copy JAR into ansible-cicd-springboot
         run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+          cp target/*.jar ansible-cicd-springboot/roles/deploy_app/files/
 
-      # 6. Debug workspace
-      - name: Debug workspace
+      # 6. Commit and push changes
+      - name: Commit and push JAR
         run: |
-          pwd
-          ls -R ansible-cicd-springboot
-
-      # 7. Run Ansible Playbook (from repo root so ansible.cfg is picked up)
-      - name: Run Ansible Playbook
-        working-directory: ansible-cicd-springboot
-        run: ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
+          cd ansible-cicd-springboot
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add roles/deploy_app/files/*.jar
+          git commit -m "Add latest build JAR"
+          git push
