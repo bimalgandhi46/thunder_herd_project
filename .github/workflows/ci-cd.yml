@@ -42,18 +42,18 @@ jobs:
 
       - name: Move JAR into role files
         run: |
-          mkdir -p roles/deploy_app/files
-          mv ./jar/*.jar roles/deploy_app/files/springboot-app.jar
+          mkdir -p ansible-cicd-springboot-/roles/deploy_app/files
+          mv ./jar/*.jar ansible-cicd-springboot-/roles/deploy_app/files/springboot-app.jar
 
       - name: List files before Ansible
-        run: ls -lh roles/deploy_app/files/
+        run: ls -lh ansible-cicd-springboot-/roles/deploy_app/files/
 
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          for host in $(grep ansible_host inventory/hosts.yml | awk '{print $2}'); do
+          for host in $(grep ansible_host ansible-cicd-springboot-/inventory/hosts.yml | awk '{print $2}'); do
             ssh-keyscan -H $host >> ~/.ssh/known_hosts
           done
 
@@ -63,5 +63,6 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Run Ansible playbook
+        working-directory: ansible-cicd-springboot-
         run: |
           ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
