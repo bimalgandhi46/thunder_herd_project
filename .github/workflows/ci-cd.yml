@@ -11,9 +11,6 @@ jobs:
     steps:
       - name: Checkout Spring Boot repo
         uses: actions/checkout@v4
-        with:
-          repository: bimalgandhi46/thunder_herd_project
-          path: springboot-app
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -22,14 +19,13 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Maven
-        working-directory: springboot-app
         run: mvn clean package -DskipTests
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: springboot-jar
-          path: springboot-app/target/*.jar
+          path: target/*.jar
 
   deploy:
     runs-on: ubuntu-latest
@@ -38,8 +34,8 @@ jobs:
       - name: Checkout Ansible repo
         uses: actions/checkout@v4
         with:
-          repository: bimalgandhi46/ansible-cicd-springboot-   # <-- replace with your actual repo name
-          path: ansible-cicd-springboot-
+          repository: bimalgandhi46/ansible-cicd-springboot
+          path: ansible-cicd-springboot
 
       - name: Download artifact
         uses: actions/download-artifact@v4
