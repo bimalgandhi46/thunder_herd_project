@@ -36,8 +36,8 @@ jobs:
       - name: Checkout Ansible repo
         uses: actions/checkout@v4
         with:
-          repository: bimalgandhi46/ansible-cicd-springboot
-          path: ansible-cicd-springboot
+          repository: bimalgandhi46/ansible-cicd-springboot-
+          path: ansible-cicd-springboot-
           token: ${{ secrets.PAT_TOKEN }}   # PAT required for private repo
 
       - name: Download artifact
