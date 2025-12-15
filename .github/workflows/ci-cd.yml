@@ -12,7 +12,7 @@ jobs:
       - name: Checkout Spring Boot repo
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}   # default token works for current repo
+          token: ${{ secrets.GITHUB_TOKEN }}   # Access current repo
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -36,9 +36,9 @@ jobs:
       - name: Checkout Ansible repo
         uses: actions/checkout@v4
         with:
-          repository: bimalgandhi46/ansible-cicd-springboot-
-          path: ansible-cicd-springboot-
-          token: ${{ secrets.PAT_TOKEN }}   # PAT required for private repo
+          repository: bimalgandhi46/ansible-cicd-springboot
+          path: ansible-cicd-springboot
+          token: ${{ secrets.PAT_TOKEN }}   # Access private Ansible repo
 
       - name: Download artifact
         uses: actions/download-artifact@v4
@@ -47,20 +47,20 @@ jobs:
           path: ./jar
 
       - name: Move JAR into role files
-        working-directory: ansible-cicd-springboot-
+        working-directory: ansible-cicd-springboot
         run: |
           mkdir -p roles/deploy_app/files
           mv ../jar/*.jar roles/deploy_app/files/springboot-app.jar
 
       - name: List files before Ansible
-        working-directory: ansible-cicd-springboot-
+        working-directory: ansible-cicd-springboot
         run: ls -lh roles/deploy_app/files/
 
       - name: Configure SSH
-        working-directory: ansible-cicd-springboot-
+        working-directory: ansible-cicd-springboot
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KE }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           for host in $(grep ansible_host inventory/hosts.yml | awk '{print $2}'); do
             ssh-keyscan -H $host >> ~/.ssh/known_hosts
@@ -72,6 +72,6 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Run Ansible playbook
-        working-directory: ansible-cicd-springboot-
+        working-directory: ansible-cicd-springboot
         run: |
           ansible-playbook -i inventory/hosts.yml playbooks/deploy.yml
