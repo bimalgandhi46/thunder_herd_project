@@ -3,9 +3,10 @@ server:
 
 spring:
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASS}
+    # These placeholders will resolve to your systemd env vars
+    url: jdbc:postgresql://10.0.0.2:5432/bank_data
+    username: postgres
+    password: Test1234
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -18,8 +19,15 @@ spring:
     init:
       mode: always       # ensures schema/data scripts run if present
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
 logging:
   level:
+    root: INFO
     org.springframework: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
