@@ -1,14 +1,25 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: postgres
-    # password injected via Ansible template at deploy time
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: false
-
 server:
   port: 8080
 
-spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS: false
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update   # options: none, validate, update, create, create-drop
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true       # optional: logs SQL statements for debugging
+
+  sql:
+    init:
+      mode: always       # ensures schema/data scripts run if present
+
+logging:
+  level:
+    org.springframework: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
