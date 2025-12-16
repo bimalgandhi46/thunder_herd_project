@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.cache.entity.Transactions;
 import com.example.cache.service.TransactionService;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 @RestController
 @RequestMapping("/api/transactions")
@@ -35,12 +37,18 @@ public class TransactionController {
 	    }
 
 	    @GetMapping("/domain/{domain}")
-	    public Page<Transactions> getByDomain(@PathVariable String domain,Pageable pageable) {
+	    public Page<Transactions> getByDomain(@PathVariable("domain") String domain,
+	            @RequestParam(name = "page", defaultValue = "0") int page,
+	            @RequestParam(name = "size", defaultValue = "20") int size) {
+	    	Pageable pageable = PageRequest.of(page, size);
 	        return service.getByDomain(domain,pageable);
 	    }
 
 	    @GetMapping("/location/{location}")
-	    public Page<Transactions> getByLocation(@PathVariable String location,Pageable pageable) {
+	    public Page<Transactions> getByLocation(@PathVariable String location,
+	    		@RequestParam(name = "page", defaultValue = "0") int page,
+	            @RequestParam(name = "size", defaultValue = "20") int size) {
+	    	Pageable pageable = PageRequest.of(page, size);
 	        return service.getByLocation(location,pageable);
 	    }
 
