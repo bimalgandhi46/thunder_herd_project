@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 	@GetMapping("/health")
-    public Map<String, String> health(@RequestParam String nam) {
-       return Map.of("status", "OK");
+	public Map<String, String> health(@RequestParam(name = "nam") String nam) {
+		return Map.of("status", "OK", "name", nam);
     }
 }
