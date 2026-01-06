@@ -12,5 +12,6 @@ import org.springframework.data.domain.Pageable;
 public interface TransactionRepository extends JpaRepository<Transactions, Long>{
 	Page<Transactions> findByDomainIgnoreCase(String domain, Pageable pageable);
     Page<Transactions> findByLocationIgnoreCase(String location, Pageable pageable);
+	long countByDomainIgnoreCase(String domain);
 	
 }
