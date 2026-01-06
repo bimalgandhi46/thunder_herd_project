@@ -38,17 +38,15 @@ public class TransactionController {
 
 	    @GetMapping("/domain/{domain}")
 	    public Page<Transactions> getByDomain(@PathVariable("domain") String domain,
-	            @RequestParam(name = "page", defaultValue = "0") int page,
-	            @RequestParam(name = "size", defaultValue = "20") int size) {
-	    	Pageable pageable = PageRequest.of(page, size);
-	        return service.getByDomain(domain,pageable);
+	    		Pageable pageable) {
+	    	
+	    	return service.getByDomain(domain, pageable);
 	    }
 
 	    @GetMapping("/location/{location}")
 	    public Page<Transactions> getByLocation(@PathVariable String location,
-	    		@RequestParam(name = "page", defaultValue = "0") int page,
-	            @RequestParam(name = "size", defaultValue = "20") int size) {
-	    	Pageable pageable = PageRequest.of(page, size);
+	    		 Pageable pageable) {
+	    	
 	        return service.getByLocation(location,pageable);
 	    }
 
