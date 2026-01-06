@@ -19,6 +19,21 @@ spring:
     init:
       mode: always
 
+  data:
+    redis:
+      host: 10.0.0.5
+      port: 6379
+      password:
+      timeout: 2000
+      lettuce:
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+
+  cache:
+    type: redis
+
 management:
   endpoints:
     web:

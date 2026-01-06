@@ -9,6 +9,9 @@ import com.example.cache.entity.Transactions;
 import com.example.cache.repository.TransactionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.cache.annotation.Cacheable;
+
+
 ;
 @Service
 public class TransactionService {
@@ -27,7 +30,11 @@ public class TransactionService {
 	    public Transactions getTransactionById(Long id) {
 	         return repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
 	    }
-
+	    @Cacheable(
+	    	    value = "transactionsByDomain",
+	    	    key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort.toString()",
+	    	    unless = "#result == null || #result.isEmpty()"
+	    	)
 	    public Page<Transactions> getByDomain(String domain, Pageable pageable) {
 	        return repository.findByDomainIgnoreCase(domain, pageable);
 	    }
