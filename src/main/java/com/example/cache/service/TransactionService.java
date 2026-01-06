@@ -16,10 +16,14 @@ import org.springframework.cache.annotation.Cacheable;
 @Service
 public class TransactionService {
 
-	private final TransactionRepository repository;
 
-	public TransactionService(TransactionRepository repository) {
+
+	private final TransactionRepository repository;
+	private final CountService countService;
+
+	public TransactionService(TransactionRepository repository, CountService countService) {
 		this.repository = repository;
+		this.countService = countService;
 	}
 
 	public List<Transactions> getAllTransactions() {
@@ -35,13 +39,10 @@ public class TransactionService {
 		return repository.findByDomainIgnoreCase(domain, pageable).getContent();
 	}
 
-	@Cacheable(value = "countByDomain", key = "#domain")
-	public long countByDomainCached(String domain) {
-		return repository.countByDomainIgnoreCase(domain);
-	}
+
 	public Page<Transactions> getByDomain(String domain, Pageable pageable) {
 		List<Transactions> cached = getByDomainCached(domain, pageable);
-		long total = countByDomainCached(domain);
+		long total = countService.countByDomainCached(domain);
 		return new PageImpl<>(cached, pageable, total);
 	}
 
