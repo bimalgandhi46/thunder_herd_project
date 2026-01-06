@@ -12,9 +12,10 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 public class RedisConfig {
 	@Bean
 	public RedisCacheConfiguration cacheConfiguration()
-
+	ObjectMapper mapper = new ObjectMapper(); 
+	mapper.registerModule(new JavaTimeModule()); 
+	mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 	{
-		return RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(
-				RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+		return RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith( RedisSerializationContext.SerializationPair.fromSerializer(serializer) );
 	}
 }
