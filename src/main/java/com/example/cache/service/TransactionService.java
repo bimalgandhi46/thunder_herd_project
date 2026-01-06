@@ -11,19 +11,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.cache.annotation.Cacheable;
 
-;
-
 @Service
 public class TransactionService {
 
-
-
-	private final TransactionRepository repository;
+	private final ListCacheService listCacheService;
 	private final CountService countService;
+	private final TransactionRepository repository;
 
-	public TransactionService(TransactionRepository repository, CountService countService) {
-		this.repository = repository;
+	public TransactionService(ListCacheService listCacheService, CountService countService,
+			TransactionRepository repository) {
+		this.listCacheService = listCacheService;
 		this.countService = countService;
+		this.repository = repository;
 	}
 
 	public List<Transactions> getAllTransactions() {
@@ -34,16 +33,10 @@ public class TransactionService {
 		return repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
 	}
 
-	@Cacheable(value = "transactionsByDomain", key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize")
-	public List<Transactions> getByDomainCached(String domain, Pageable pageable) {
-		return repository.findByDomainIgnoreCase(domain, pageable).getContent();
-	}
-
-
 	public Page<Transactions> getByDomain(String domain, Pageable pageable) {
-		List<Transactions> cached = getByDomainCached(domain, pageable);
+		List<Transactions> cachedList = listCacheService.getByDomainCached(domain, pageable);
 		long total = countService.countByDomainCached(domain);
-		return new PageImpl<>(cached, pageable, total);
+		return new PageImpl<>(cachedList, pageable, total);
 	}
 
 	public Page<Transactions> getByLocation(String location, Pageable pageable) {
