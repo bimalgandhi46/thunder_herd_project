@@ -2,9 +2,6 @@ package com.example.cache.service;
 
 import com.example.cache.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
-
-import com.example.cache.entity.Transactions;
-
 import org.springframework.cache.annotation.Cacheable;
 
 @Service
