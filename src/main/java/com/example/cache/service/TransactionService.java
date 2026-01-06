@@ -32,8 +32,7 @@ public class TransactionService {
 	    }
 	    @Cacheable(
 	    	    value = "transactionsByDomain",
-	    	    key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize + ':' + #pageable.sort.toString()",
-	    	    unless = "#result == null || #result.isEmpty()"
+	    	    key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize"
 	    	)
 	    public Page<Transactions> getByDomain(String domain, Pageable pageable) {
 	        return repository.findByDomainIgnoreCase(domain, pageable);
