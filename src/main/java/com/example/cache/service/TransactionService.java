@@ -35,9 +35,13 @@ public class TransactionService {
 		return repository.findByDomainIgnoreCase(domain, pageable).getContent();
 	}
 
+	@Cacheable(value = "countByDomain", key = "#domain")
+	public long countByDomainCached(String domain) {
+		return repository.countByDomainIgnoreCase(domain);
+	}
 	public Page<Transactions> getByDomain(String domain, Pageable pageable) {
 		List<Transactions> cached = getByDomainCached(domain, pageable);
-		long total = repository.countByDomainIgnoreCase(domain);
+		long total = countByDomainCached(domain);
 		return new PageImpl<>(cached, pageable, total);
 	}
 
