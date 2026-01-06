@@ -12,14 +12,17 @@ import java.util.List;
 @Service
 
 public class ListCacheService {
+
 	private final TransactionRepository repository;
 
-	public ListCacheService(TransactionRepository repository) {
-		this.repository = repository;
+	public ListCacheService(TransactionRepository repository) { 
+		this.repository = repository; 
+		}
+	
+	@Cacheable( value = "transactionsByDomain", key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize"
+			)
+	public List<Transactions> getByDomainCached(String domain, Pageable pageable) { // THIS LINE IS CRITICAL 
+		return repository.findByDomainIgnoreCase(domain, pageable).getContent(); }
 	}
-
-	@Cacheable(value = "transactionsByDomain", key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize")
-	public List<Transactions> getByDomainCached(String domain, Pageable pageable) {
-		return repository.findByDomainIgnoreCase(domain, pageable).getContent();
-	}
-}
+	
+	
