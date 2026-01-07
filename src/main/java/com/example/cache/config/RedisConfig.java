@@ -12,6 +12,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Configuration
 @EnableCaching
@@ -20,11 +21,11 @@ public class RedisConfig {
 
 	public RedisCacheConfiguration cacheConfiguration() {
 		ObjectMapper mapper = new ObjectMapper();
-		mapper.registerModule(new JavaTimeModule());
-		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper);
-		return RedisCacheConfiguration.defaultCacheConfig()
-				.entryTtl(Duration.ofMinutes(15))
-				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
-	}
+		mapper.registerModule(new JavaTimeModule()); 
+		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); 
+		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper); // Base TTL 
+		Duration baseTtl = Duration.ofMinutes(15); // Add jitter: 0–300 seconds (5 minutes) 
+		int jitterSeconds = ThreadLocalRandom.current().nextInt(0, 300); Duration ttlWithJitter = baseTtl.plusSeconds(jitterSeconds); 
+		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(ttlWithJitter).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
+}
 }
