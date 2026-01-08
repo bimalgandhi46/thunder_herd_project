@@ -1,8 +1,10 @@
 server:
-  address: 0.0.0.0
   port: 8080
 
 spring:
+  application:
+    name: bankapp
+
   datasource:
     url: jdbc:postgresql://10.0.0.2:5432/bank_data
     username: springbootappuser
@@ -12,24 +14,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true
-
-  sql:
-    init:
-      mode: always
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
 
   data:
     redis:
-      host: 10.0.0.5
-      port: 6379
-      password:
+      sentinel:
+        master: mymaster
+        nodes:
+          - 10.0.0.5:26379
+          - 10.0.0.6:26379
+          - 10.0.0.19:26379
       timeout: 2000
-      lettuce:
-        pool:
-          max-active: 50
-          max-idle: 20
-          min-idle: 5
 
   cache:
     type: redis
@@ -38,16 +36,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus,health,info,metrics
+        include: health,info,metrics,prometheus
   endpoint:
-    prometheus:
-      enabled: true
     health:
       show-details: always
 
 logging:
   level:
     root: INFO
-    org.springframework: INFO
+    org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
