@@ -1,33 +1,32 @@
 server:
   port: 8080
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 20
 
 spring:
   application:
-    name: bankapp
+    name: secure-order-service
 
-  datasource:
-    url: jdbc:postgresql://10.0.0.2:5432/bank_data
-    username: springbootappuser
-    password: Test1234
-    driver-class-name: org.postgresql.Driver
+  redis:
+    sentinel:
+      master: mymaster
+      nodes:
+        - 10.0.0.5:26379
+        - 10.0.0.6:26379
+        - 10.0.0.19:26379
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        format_sql: true
+    # Lettuce client configuration
+    lettuce:
+      read-from: replica-preferred   # <— CRITICAL: enables read load balancing
+      pool:
+        max-active: 50
+        max-idle: 20
+        min-idle: 5
+        time-between-eviction-runs: 60000
 
-  data:
-    redis:
-      sentinel:
-        master: mymaster
-        nodes:
-          - 10.0.0.5:26379
-          - 10.0.0.6:26379
-          - 10.0.0.19:26379
-      timeout: 2000
+    timeout: 3000
 
   cache:
     type: redis
@@ -40,9 +39,13 @@ management:
   endpoint:
     health:
       show-details: always
+  metrics:
+    tags:
+      application: secure-order-service
 
 logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
+    org.springframework.data.redis: INFO
+    io.lettuce.core: INFO
