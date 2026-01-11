@@ -2,27 +2,33 @@ package com.example.cache.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-
 import com.example.cache.entity.Transactions;
 import com.example.cache.repository.TransactionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Pageable;;
 
 @Service
 public class TransactionService {
 
+	
 	private final ListCacheService listCacheService;
 	private final CountService countService;
 	private final TransactionRepository repository;
+	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, Object> replicaRedisTemplate;
 
 	public TransactionService(ListCacheService listCacheService, CountService countService,
-			TransactionRepository repository) {
+			TransactionRepository repository, RedisTemplate<String, Object> redisTemplate,
+			@Qualifier("replicaRedisTemplate") RedisTemplate<String, Object> replicaRedisTemplate) {
 		this.listCacheService = listCacheService;
 		this.countService = countService;
 		this.repository = repository;
+		this.redisTemplate = redisTemplate;
+		this.replicaRedisTemplate = replicaRedisTemplate;
 	}
 
 	public List<Transactions> getAllTransactions() {
@@ -49,5 +55,17 @@ public class TransactionService {
 
 	public void deleteTransaction(Long id) {
 		repository.deleteById(id);
+	}
+
+	public Object getCachedValue(String key) {
+		return replicaRedisTemplate.opsForValue().get(key);
+	}
+
+	public void cacheValue(String key, Object value) {
+		redisTemplate.opsForValue().set(key, value);
+	}
+
+	public void deleteCachedValue(String key) {
+		redisTemplate.delete(key);
 	}
 }
