@@ -20,31 +20,22 @@ spring:
 
   data:
     redis:
+      sentinel:
+        master: mymaster
+        nodes:
+          - 10.0.0.5:26379
+          - 10.0.0.6:26379
+          - 10.0.0.19:26379
+
+      connect-timeout: 3s
+
       lettuce:
+        read-from: replica-preferred
         pool:
-          time-between-eviction-runs: 30s
-          enabled: true
-          max-active: 8
-          max-idle: 8
-          min-idle: 1
-
-  redis:
-    sentinel:
-      master: mymaster
-      nodes:
-        - 10.0.0.5:26379
-        - 10.0.0.6:26379
-        - 10.0.0.19:26379
-
-    connect-timeout: 3s
-
-    lettuce:
-      read-from: replica-preferred
-      pool:
-        max-active: 50
-        max-idle: 20
-        min-idle: 5
-        time-between-eviction-runs: 60000
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          time-between-eviction-runs: 60s
 
   cache:
     type: redis
