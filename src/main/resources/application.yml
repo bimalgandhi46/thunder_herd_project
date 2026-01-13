@@ -2,9 +2,6 @@ server:
   port: 8080
 
 spring:
-  application:
-    name: bankapp
-
   datasource:
     url: jdbc:postgresql://10.0.0.13:5432/bank_data
     username: springbootappuser
@@ -16,8 +13,9 @@ spring:
       ddl-auto: none
     properties:
       hibernate:
-        show-sql: false
-        false open-in-view: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: false
+    open-in-view: false
 
   data:
     redis:
@@ -45,7 +43,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,prometheus
+        include: health,info,metrics
   endpoint:
     health:
       show-details: always
@@ -53,7 +51,6 @@ management:
 logging:
   level:
     root: INFO
-    org.springframework.web: INFO
+    org.springframework: INFO
     org.hibernate.SQL: DEBUG
-    org.springframework.data.redis: INFO
-    io.lettuce.core: INFO
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
