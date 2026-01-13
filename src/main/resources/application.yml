@@ -20,7 +20,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 15m   # optional global TTL for all caches
+      time-to-live: 15m   # global TTL for all caches
 
   data:
     redis:
