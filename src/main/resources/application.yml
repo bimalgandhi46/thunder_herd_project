@@ -19,6 +19,8 @@ spring:
 
   cache:
     type: redis
+    redis:
+      time-to-live: 15m   # optional global TTL for all caches
 
   data:
     redis:
@@ -28,6 +30,13 @@ spring:
           - 10.0.0.2:26379
           - 10.0.0.3:26379
           - 10.0.0.4:26379
+      timeout: 3000
+      lettuce:
+        read-from: replica-preferred
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
 
 management:
   endpoints:
