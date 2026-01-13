@@ -2,11 +2,20 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: springbootapp
+
   datasource:
     url: jdbc:postgresql://10.0.0.13:5432/bank_data
     username: springbootappuser
     password: Test1234
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 30000
+      connection-timeout: 30000
+      max-lifetime: 1800000
 
   jpa:
     hibernate:
@@ -26,15 +35,31 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
+      timeout: 3s
       connect-timeout: 3s
 
       lettuce:
         read-from: replica-preferred
+
+        # 🔥 Failover + Retry + Reconnect
+        cluster:
+          refresh:
+            adaptive: true      # auto-detect master changes
+            period: 5s          # refresh topology every 5 seconds
+
         pool:
           max-active: 50
           max-idle: 20
           min-idle: 5
           time-between-eviction-runs: 60s
+
+        # Retry logic (Spring Boot 3.x compatible)
+        retry:
+          enabled: true
+          max-attempts: 5
+          initial-interval: 200ms
+          max-interval: 2s
+          multiplier: 2
 
   cache:
     type: redis
