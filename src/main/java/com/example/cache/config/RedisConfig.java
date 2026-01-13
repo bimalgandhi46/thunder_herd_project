@@ -1,8 +1,6 @@
 package com.example.cache.config;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -26,15 +24,15 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.ReadFrom;
 
-
 @Configuration
+@EnableCaching
 public class RedisConfig {
 
     @Value("${spring.data.redis.sentinel.master}")
     private String masterName;
 
-    @Value("${spring.data.redis.sentinel.masters.nodes}")
-    private List<String> sentinelNodes;
+    @Value("${spring.data.redis.sentinel.nodes}")
+    private String sentinelNodes; // comma-separated string
 
     @Bean
     @Primary
@@ -43,8 +41,8 @@ public class RedisConfig {
         RedisSentinelConfiguration sentinelConfig = new RedisSentinelConfiguration();
         sentinelConfig.setMaster(masterName);
 
-        for (String node : sentinelNodes) {
-            String[] parts = node.split(":");
+        for (String node : sentinelNodes.split(",")) {
+            String[] parts = node.trim().split(":");
             sentinelConfig.addSentinel(new RedisNode(parts[0], Integer.parseInt(parts[1])));
         }
 
@@ -58,6 +56,7 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheConfiguration cacheConfiguration() {
+
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -65,12 +64,8 @@ public class RedisConfig {
         GenericJackson2JsonRedisSerializer serializer =
                 new GenericJackson2JsonRedisSerializer(mapper);
 
-        Duration baseTtl = Duration.ofMinutes(15);
-        int jitterSeconds = ThreadLocalRandom.current().nextInt(0, 300);
-        Duration ttlWithJitter = baseTtl.plusSeconds(jitterSeconds);
-
         return RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(ttlWithJitter)
+                .entryTtl(Duration.ofMinutes(15))
                 .serializeValuesWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(serializer)
                 );
@@ -78,8 +73,10 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
+
         return template;
     }
 
