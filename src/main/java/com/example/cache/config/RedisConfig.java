@@ -26,7 +26,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import io.lettuce.core.ReadFrom;
 
-@EnableCaching
+
 @Configuration
 public class RedisConfig {
 
