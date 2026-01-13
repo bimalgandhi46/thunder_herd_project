@@ -33,7 +33,7 @@ public class RedisConfig {
     @Value("${spring.data.redis.sentinel.master}")
     private String masterName;
 
-    @Value("#{'${spring.data.redis.sentinel.nodes}'.split(',')}")
+    @Value("${spring.data.redis.sentinel.masters.nodes}")
     private List<String> sentinelNodes;
 
     @Bean
