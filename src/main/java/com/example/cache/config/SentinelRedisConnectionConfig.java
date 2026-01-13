@@ -3,6 +3,7 @@ package com.example.cache.config;
 import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
@@ -11,6 +12,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import io.lettuce.core.ReadFrom;
 
 @Configuration
+@Primary
 public class SentinelRedisConnectionConfig {
 	@Bean
 	public RedisConnectionFactory redisConnectionFactory() {
