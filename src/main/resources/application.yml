@@ -20,6 +20,15 @@ spring:
   cache:
     type: redis
 
+  data:
+    redis:
+      sentinel:
+        master: mymaster
+        nodes:
+          - 10.0.0.2:26379
+          - 10.0.0.3:26379
+          - 10.0.0.4:26379
+
 management:
   endpoints:
     web:

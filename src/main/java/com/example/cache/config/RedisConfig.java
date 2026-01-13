@@ -64,7 +64,6 @@ public class RedisConfig {
 		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(ttlWithJitter)
 				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));
 	} 
-
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
