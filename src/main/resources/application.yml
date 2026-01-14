@@ -25,16 +25,15 @@ spring:
       hibernate:
         format_sql: false
 
-  data:
-    redis:
-      sentinel:
-        master: mymaster
-        nodes:
-          - 10.0.0.2:26379
-          - 10.0.0.3:26379
-          - 10.0.0.4:26379
-      timeout: 3000
-      database: 0
+  redis:
+    sentinel:
+      master: mymaster
+      nodes:
+        - 10.0.0.2:26379
+        - 10.0.0.3:26379
+        - 10.0.0.4:26379
+    timeout: 3000
+    database: 0
 
 logging:
   level:

@@ -36,10 +36,10 @@ import io.lettuce.core.ReadFrom;
 @EnableCaching
 @Configuration
 public class RedisConfig {
-	@Value("${spring.data.redis.sentinel.master}")
+	@Value("${spring.redis.sentinel.master}")
 	private String masterName;
 
-	@Value("${spring.data.redis.sentinel.nodes}")
+	@Value("${spring.redis.sentinel.nodes}")
 	private List<String> sentinelNodes;
 
 	@Bean
