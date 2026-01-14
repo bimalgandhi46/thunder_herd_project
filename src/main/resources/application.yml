@@ -3,50 +3,56 @@ server:
 
 spring:
   application:
-    name: springbootapp
+    name: bankapp
 
   datasource:
     url: jdbc:postgresql://10.0.0.13:5432/bank_data
     username: springbootappuser
     password: Test1234
     driver-class-name: org.postgresql.Driver
-    hikari:
-      maximum-pool-size: 10
-      minimum-idle: 2
-      idle-timeout: 30000
-      connection-timeout: 30000
-      max-lifetime: 1800000
 
   jpa:
     hibernate:
-      ddl-auto: none
-    show-sql: false
+      ddl-auto: update
     properties:
       hibernate:
-        format_sql: false
+        format_sql: true
 
-  redis:
-    sentinel:
-      master: mymaster
-      nodes:
-        - 10.0.0.2:26379
-        - 10.0.0.3:26379
-        - 10.0.0.4:26379
-    timeout: 3000
-    database: 0
+  data:
+    redis:
+      sentinel:
+        master: mymaster
+        nodes:
+          - 10.0.0.5:26379
+          - 10.0.0.6:26379
+          - 10.0.0.19:26379
 
-logging:
-  level:
-    root: INFO
-    org.hibernate.SQL: DEBUG
-    org.springframework.data.redis: INFO
-    com.example.cache: DEBUG
+      connect-timeout: 3s
+
+      lettuce:
+        read-from: replica-preferred
+        pool:
+          max-active: 50
+          max-idle: 20
+          min-idle: 5
+          time-between-eviction-runs: 60s
+
+  cache:
+    type: redis
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,prometheus
   endpoint:
     health:
       show-details: always
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.springframework.data.redis: INFO
+    io.lettuce.core: INFO
