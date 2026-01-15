@@ -26,7 +26,7 @@ public class RedisConfig {
 		mapper.registerModule(new JavaTimeModule()); 
 		mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); 
 		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(mapper); // Base TTL 
-		Duration baseTtl = Duration.ofMinutes(30); 
+		Duration baseTtl = Duration.ofHours(6);
 		int jitterSeconds = ThreadLocalRandom.current().nextInt(0, 300); 
 		Duration ttlWithJitter = baseTtl.plusSeconds(jitterSeconds); 
 		return RedisCacheConfiguration.defaultCacheConfig().entryTtl(ttlWithJitter).serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer));

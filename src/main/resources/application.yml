@@ -35,14 +35,14 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
-      connect-timeout: 3s
+      timeout: 3s   # FIXED: correct property name
 
       lettuce:
         read-from: replica-preferred
         pool:
-          max-active: 50
-          max-idle: 20
-          min-idle: 5
+          max-active: 200
+          max-idle: 50
+          min-idle: 20
           time-between-eviction-runs: 60s
 
   cache:
