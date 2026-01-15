@@ -11,12 +11,20 @@ spring:
     password: Test1234
     driver-class-name: org.postgresql.Driver
 
+    hikari:
+      maximum-pool-size: 30
+      minimum-idle: 10
+      idle-timeout: 30000
+      max-lifetime: 1800000
+      connection-timeout: 30000
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
         format_sql: true
+    show-sql: false
 
   data:
     redis:
@@ -39,6 +47,9 @@ spring:
 
   cache:
     type: redis
+    redis:
+      time-to-live: 600000   # 10 minutes TTL
+      cache-null-values: false
 
 management:
   endpoints:
