@@ -19,6 +19,7 @@ public class CacheWarm {
 	public void warmCache() {
 		List<String> domains = List.of("INTERNATIONAL", "PUBLIC", "RESTRAUNT", "EDUCATION", "MEDICAL", "INVESTMENTS",
 				"RETAIL");
+		System.out.println("Cache Warmpup");
 		var pageable = PageRequest.of(0, 10);
 		domains.forEach(domain -> transactionService.getByDomain(domain, pageable));
 	}

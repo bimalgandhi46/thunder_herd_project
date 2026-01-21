@@ -21,6 +21,7 @@ public class CountService {
         Object lock = lockManager.getLock(domain);
 
         synchronized (lock) {
+        	System.out.println("Synchronized COuntService");
             return repository.countByDomainIgnoreCase(domain);
         }
     }

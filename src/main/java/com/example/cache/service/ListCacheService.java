@@ -30,6 +30,7 @@ public class ListCacheService {
         Object lock = lockManager.getLock(key);
 
         synchronized (lock) {
+        	System.out.println("Synchronized ListCacheService");
             return repository
                     .findByDomainIgnoreCase(domain, pageable)
                     .getContent();
