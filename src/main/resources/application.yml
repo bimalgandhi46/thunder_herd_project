@@ -35,7 +35,7 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
-      timeout: 3s   # FIXED: correct property name
+      timeout: 3s
 
       lettuce:
         read-from: replica-preferred
@@ -48,7 +48,7 @@ spring:
   cache:
     type: redis
     redis:
-      time-to-live: 600000   # 10 minutes TTL
+      time-to-live: 600000
       cache-null-values: false
 
 management:
@@ -56,9 +56,27 @@ management:
     web:
       exposure:
         include: health,info,metrics,prometheus
+
   endpoint:
     health:
       show-details: always
+
+  metrics:
+    enable:
+      jdbc: true
+      executor: true
+      http: true
+      tomcat: true
+      jvm: true
+
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true
+        "[jdbc.connections]": true
+        "[executor]": true
+
+      percentiles:
+        "[http.server.requests]": 0.5,0.95,0.99
 
 logging:
   level:
