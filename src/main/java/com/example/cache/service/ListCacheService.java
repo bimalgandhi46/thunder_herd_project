@@ -20,7 +20,9 @@ public class ListCacheService {
         this.lockManager = lockManager;
     }
 
-    @Cacheable(value = "transactionsByDomain", key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize" )
+    @Cacheable(
+            value = "transactionsByDomain",
+            key = "'v2:' + #domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize"  )
     public List<Transactions> getByDomainCached(String domain, Pageable pageable) 
     { 
     	return repository .findByDomainIgnoreCase(domain, pageable) .getContent();
