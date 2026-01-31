@@ -3,9 +3,9 @@ server:
 
   tomcat:
     threads:
-      max: 300          # allow more concurrent requests
+      max: 300
       min-spare: 20
-    accept-count: 200   # queue before rejecting
+    accept-count: 200
     connection-timeout: 5000
 
 spring:
@@ -59,8 +59,6 @@ spring:
       time-to-live: 600000
       cache-null-values: false
 
-# Async executor (used by @Async or internal thread pools)
-spring:
   task:
     execution:
       pool:
