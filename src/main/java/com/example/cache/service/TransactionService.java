@@ -1,20 +1,19 @@
 package com.example.cache.service;
 
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.example.cache.dto.TransactionDto;
 import com.example.cache.entity.Transactions;
 import com.example.cache.repository.TransactionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.cache.annotation.Cacheable;
 
 @Service
 public class TransactionService {
 
-	
 	private final ListCacheService listCacheService;
 	private final CountService countService;
 	private final TransactionRepository repository;
@@ -24,34 +23,62 @@ public class TransactionService {
 		this.listCacheService = listCacheService;
 		this.countService = countService;
 		this.repository = repository;
-		
+
 	}
 
-	public List<Transactions> getAllTransactions() {
-		return repository.findAll();
+	private TransactionDto toDto(Transactions t) {
+		return new TransactionDto(t.getId(), 
+				t.getDate(), t.getDomain(), 
+				t.getLocation(), 
+				t.getValue(),
+				t.getTransactionCount());
 	}
 
-	public Transactions getTransactionById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
+	public Page<TransactionDto> getAllTransactions(int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Transactions> entityPage = repository.findAll(pageable);
+		var dtoList = entityPage.getContent().stream().map(this::toDto).toList();
+		return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
 	}
 
-	public Page<Transactions> getByDomain(String domain, Pageable pageable) {
-		List<Transactions> cachedList = listCacheService.getByDomainCached(domain, pageable);
+	public TransactionDto getTransactionById(Long id) {
+		Transactions entity = repository.findById(id).orElseThrow(() -> new RuntimeException("Transaction not found"));
+		return toDto(entity);
+	}
+
+	public Page<TransactionDto> getByDomain(String domain, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		var cachedList = listCacheService.getByDomainCached(domain, pageable);
 		long total = countService.countByDomainCached(domain);
-		return new PageImpl<>(cachedList, pageable, total);
+		var dtoList = cachedList.stream().map(this::toDto).toList();
+		return new PageImpl<>(dtoList, pageable, total);
 	}
 
-	public Page<Transactions> getByLocation(String location, Pageable pageable) {
-		return repository.findByLocationIgnoreCase(location, pageable);
+	public Page<TransactionDto> getByLocation(String location, int page, int size) {
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Transactions> entityPage = repository.findByLocationIgnoreCase(location, pageable);
+		var dtoList = entityPage.getContent().stream().map(this::toDto).toList();
+		return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
 	}
 
-	public Transactions saveTransaction(Transactions transaction) {
-		return repository.save(transaction);
+	public TransactionDto saveTransaction(TransactionDto dto) {
+
+	    Transactions entity = new Transactions();
+	    entity.setId(dto.id());
+	    entity.setDate(dto.date());        // String → LocalDate
+	    entity.setDomain(dto.domain());
+	    entity.setLocation(dto.location());
+	    entity.setValue(dto.value().longValue());           // Integer → Long
+	    entity.setTransactionCount(dto.transactionCount());
+
+	    Transactions saved = repository.save(entity);
+
+	    return toDto(saved);
 	}
+
 
 	public void deleteTransaction(Long id) {
 		repository.deleteById(id);
 	}
-
 
 }
