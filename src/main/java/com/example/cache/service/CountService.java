@@ -6,23 +6,14 @@ import org.springframework.cache.annotation.Cacheable;
 
 @Service
 public class CountService {
+	private final TransactionRepository repository;
 
-    private final TransactionRepository repository;
-    private final CacheLockManager lockManager;
+	public CountService(TransactionRepository repository) {
+		this.repository = repository;
+	}
 
-    public CountService(TransactionRepository repository, CacheLockManager lockManager) {
-        this.repository = repository;
-        this.lockManager = lockManager;
-    }
-
-    @Cacheable(value = "countByDomain", key = "#domain")
-    public long countByDomainCached(String domain) {
-
-        Object lock = lockManager.getLock(domain);
-
-        synchronized (lock) {
-        	System.out.println("Synchronized COuntService");
-            return repository.countByDomainIgnoreCase(domain);
-        }
-    }
+	@Cacheable(value = "countByDomain", key = "#domain")
+	public long countByDomainCached(String domain) {
+		return repository.countByDomainIgnoreCase(domain);
+	}
 }
