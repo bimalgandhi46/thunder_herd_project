@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import com.example.cache.service.TransactionService;
 
 public class CacheWarm {
+	/*
 	private final TransactionService transactionService;
 
 	public CacheWarm(TransactionService transactionService) {
@@ -22,5 +23,5 @@ public class CacheWarm {
 		System.out.println("Cache Warmpup");
 		var pageable = PageRequest.of(0, 10);
 		domains.forEach(domain -> transactionService.getByDomain(domain, pageable));
-	}
+	}*/
 }
