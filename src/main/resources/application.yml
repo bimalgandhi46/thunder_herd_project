@@ -1,6 +1,13 @@
 server:
   port: 8080
 
+  tomcat:
+    threads:
+      max: 300          # allow more concurrent requests
+      min-spare: 20
+    accept-count: 200   # queue before rejecting
+    connection-timeout: 5000
+
 spring:
   application:
     name: bankapp
@@ -17,6 +24,7 @@ spring:
       idle-timeout: 30000
       max-lifetime: 1800000
       connection-timeout: 30000
+      pool-name: HikariPool
 
   jpa:
     hibernate:
@@ -51,23 +59,27 @@ spring:
       time-to-live: 600000
       cache-null-values: false
 
+# Async executor (used by @Async or internal thread pools)
+spring:
+  task:
+    execution:
+      pool:
+        core-size: 50
+        max-size: 100
+        queue-capacity: 500
+      thread-name-prefix: async-
+
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info,metrics,prometheus
 
   endpoint:
     health:
       show-details: always
-    prometheus:
-      enabled: true
 
   metrics:
-    export:
-      prometheus:
-        enabled: true
-
     enable:
       jdbc: true
       executor: true
