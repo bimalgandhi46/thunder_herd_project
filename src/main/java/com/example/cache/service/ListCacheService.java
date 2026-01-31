@@ -20,22 +20,10 @@ public class ListCacheService {
         this.lockManager = lockManager;
     }
 
-    @Cacheable(
-        value = "transactionsByDomain",
-        key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize"
-    )
-    public List<Transactions> getByDomainCached(String domain, Pageable pageable) {
-
-        String key = domain + ":" + pageable.getPageNumber() + ":" + pageable.getPageSize();
-        Object lock = lockManager.getLock(key);
-
-        synchronized (lock) {
-        	System.out.println("Synchronized ListCacheService");
-            return repository
-                    .findByDomainIgnoreCase(domain, pageable)
-                    .getContent();
-        }
+    @Cacheable(value = "transactionsByDomain", key = "#domain + ':' + #pageable.pageNumber + ':' + #pageable.pageSize" )
+    public List<Transactions> getByDomainCached(String domain, Pageable pageable) 
+    { 
+    	return repository .findByDomainIgnoreCase(domain, pageable) .getContent();
     }
-}
+    }
 
-	
