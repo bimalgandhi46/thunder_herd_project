@@ -3,9 +3,9 @@ server:
 
   tomcat:
     threads:
-      max: 200       # was 300 – too many vs DB connections
+      max: 800       # was 300 – too many vs DB connections
       min-spare: 20
-    accept-count: 200
+    accept-count: 2000
     connection-timeout: 5000
 
 spring:
@@ -20,8 +20,8 @@ spring:
 
     hikari:
       # Keep this conservative per instance; DB is your bottleneck
-      maximum-pool-size: 10      # was 30
-      minimum-idle: 5            # was 10
+      maximum-pool-size: 20      # was 30
+      minimum-idle: 10            # was 10
       idle-timeout: 600000       # 10m – avoid aggressive churn
       max-lifetime: 1800000      # 30m – below PG / network timeouts
       connection-timeout: 30000  # 30s – fine
@@ -65,9 +65,9 @@ spring:
   task:
     execution:
       pool:
-        core-size: 20      # was 50 – align with DB capacity
-        max-size: 200       # was 100
-        queue-capacity: 500
+        core-size: 100      # was 50 – align with DB capacity
+        max-size: 300       # was 100
+        queue-capacity: 2000
       thread-name-prefix: async-
 
 management:
