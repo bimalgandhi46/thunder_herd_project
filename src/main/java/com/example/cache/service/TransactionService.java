@@ -56,8 +56,15 @@ public class TransactionService {
 	}
 
 	public PageResponse<TransactionDto> getByDomain(String domain, int page, int size) {
-		Page<Transactions> result = repository.findByDomainIgnoreCase(domain, PageRequest.of(page, size));
-		return toPageResponse(result);
+		Pageable pageable = PageRequest.of(page, size);
+		// USE CACHED 
+		List<Transactions> list = listCacheService.getByDomainCached(domain, pageable);
+		
+		// USE CACHED COUNT 
+		long total = countService.countByDomainCached(domain);
+		
+		Page<Transactions> pageResult = new PageImpl<>(list, pageable, total);
+		return toPageResponse(pageResult);
 	}
 
 	public PageResponse<TransactionDto> getByLocation(String location, int page, int size) {
