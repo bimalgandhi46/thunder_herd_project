@@ -3,7 +3,7 @@ server:
 
   tomcat:
     threads:
-      max: 300
+      max: 100        # was 300 – too many vs DB connections
       min-spare: 20
     accept-count: 200
     connection-timeout: 5000
@@ -19,12 +19,14 @@ spring:
     driver-class-name: org.postgresql.Driver
 
     hikari:
-      maximum-pool-size: 30
-      minimum-idle: 10
-      idle-timeout: 30000
-      max-lifetime: 1800000
-      connection-timeout: 30000
+      # Keep this conservative per instance; DB is your bottleneck
+      maximum-pool-size: 10      # was 30
+      minimum-idle: 5            # was 10
+      idle-timeout: 600000       # 10m – avoid aggressive churn
+      max-lifetime: 1800000      # 30m – below PG / network timeouts
+      connection-timeout: 30000  # 30s – fine
       pool-name: HikariPool
+      leak-detection-threshold: 2000  # NEW – log if a connection is held > 2s
 
   jpa:
     hibernate:
@@ -43,9 +45,7 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
-      # REQUIRED for Spring Boot 3.3.x when Redis has NO password
-      password:
-
+      password:        # explicit empty – OK for no auth
       timeout: 3s
 
       lettuce:
@@ -65,8 +65,8 @@ spring:
   task:
     execution:
       pool:
-        core-size: 50
-        max-size: 100
+        core-size: 20      # was 50 – align with DB capacity
+        max-size: 50       # was 100
         queue-capacity: 500
       thread-name-prefix: async-
 
