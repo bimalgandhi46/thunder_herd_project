@@ -55,12 +55,9 @@ public class TransactionService {
 		return toDto(entity);
 	}
 
-	public Page<TransactionDto> getByDomain(String domain, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		var entityList = listCacheService.getByDomainCached(domain, pageable);
-		var dtoList = entityList.stream().map(this::toDto).toList();
-		long total = countService.countByDomainCached(domain);
-		return new PageImpl<>(dtoList, pageable, total);
+	public PageResponse<TransactionDto> getByDomain(String domain, int page, int size) {
+		Page<Transactions> result = repository.findByDomainIgnoreCase(domain, PageRequest.of(page, size));
+		return toPageResponse(result);
 	}
 
 	public PageResponse<TransactionDto> getByLocation(String location, int page, int size) {
