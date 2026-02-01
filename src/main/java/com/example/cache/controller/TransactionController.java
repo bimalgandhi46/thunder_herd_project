@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.cache.dto.PageResponse;
 import com.example.cache.dto.TransactionDto;
 import com.example.cache.entity.Transactions;
 import com.example.cache.service.TransactionService;
@@ -29,7 +30,7 @@ public class TransactionController {
 	}
 
 	@GetMapping
-	public Page<TransactionDto> getAll(@RequestParam(defaultValue = "0") int page,
+	public PageResponse<TransactionDto> getAll(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 
 		return service.getAllTransactions(page, size);
@@ -41,14 +42,14 @@ public class TransactionController {
 	}
 
 	@GetMapping(value = "/domain/{domain}", produces = "application/json")
-	public Page<TransactionDto> getByDomain(@PathVariable String domain, @RequestParam(defaultValue = "0") int page,
+	public PageResponse<TransactionDto> getByDomain(@PathVariable String domain, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		
 		return service.getByDomain(domain,page, size);
 	}
 
 	@GetMapping("/location/{location}")
-	public Page<TransactionDto> getByLocation( @PathVariable String location,
+	public PageResponse<TransactionDto> getByLocation( @PathVariable String location,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 

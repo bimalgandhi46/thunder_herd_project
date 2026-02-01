@@ -2,11 +2,13 @@ package com.example.cache.service;
 
 import org.springframework.stereotype.Service;
 
+import com.example.cache.dto.PageResponse;
 import com.example.cache.dto.TransactionDto;
 import com.example.cache.entity.Transactions;
 import com.example.cache.repository.TransactionRepository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,12 +30,7 @@ public class TransactionService {
 	}
 
 	private TransactionDto toDto(Transactions t) {
-		return new TransactionDto(
-				t.getId(), 
-				t.getDate(), 
-				t.getDomain(), 
-				t.getLocation(),
-				t.getValue(),
+		return new TransactionDto(t.getId(), t.getDate(), t.getDomain(), t.getLocation(), t.getValue(),
 				t.getTransactionCount());
 	}
 
@@ -48,13 +45,9 @@ public class TransactionService {
 		return t;
 	}
 
-	public Page<TransactionDto> getAllTransactions(int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-		Page<Transactions> entityPage = repository.findAll(pageable);
-
-		var dtoList = entityPage.getContent().stream().map(this::toDto).toList();
-
-		return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
+	public PageResponse<TransactionDto> getAllTransactions(int page, int size) {
+		Page<Transactions> result = repository.findAll(PageRequest.of(page, size));
+		return toPageResponse(result);
 	}
 
 	public TransactionDto getTransactionById(Long id) {
@@ -70,20 +63,21 @@ public class TransactionService {
 		return new PageImpl<>(dtoList, pageable, total);
 	}
 
-	public Page<TransactionDto> getByLocation(String location, int page, int size) {
-		Pageable pageable = PageRequest.of(page, size);
-
-		Page<Transactions> entityPage = repository.findByLocationIgnoreCase(location, pageable);
-
-		var dtoList = entityPage.getContent().stream().map(this::toDto).toList();
-
-		return new PageImpl<>(dtoList, pageable, entityPage.getTotalElements());
+	public PageResponse<TransactionDto> getByLocation(String location, int page, int size) {
+		Page<Transactions> result = repository.findByLocationIgnoreCase(location, PageRequest.of(page, size));
+		return toPageResponse(result);
 	}
 
 	public TransactionDto saveTransaction(TransactionDto dto) {
 		Transactions entity = toEntity(dto);
 		Transactions saved = repository.save(entity);
 		return toDto(saved);
+	}
+
+	private PageResponse<TransactionDto> toPageResponse(Page<Transactions> page) {
+		List<TransactionDto> dtoList = page.getContent().stream().map(this::toDto).toList();
+		return new PageResponse<>(dtoList, page.getNumber(), page.getSize(), page.getTotalElements(),
+				page.getTotalPages());
 	}
 
 	public void deleteTransaction(Long id) {
