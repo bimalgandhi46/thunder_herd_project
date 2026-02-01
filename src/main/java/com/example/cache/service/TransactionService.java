@@ -28,7 +28,12 @@ public class TransactionService {
 	}
 
 	private TransactionDto toDto(Transactions t) {
-		return new TransactionDto(t.getId(), t.getDate(), t.getDomain(), t.getLocation(), t.getValue(),
+		return new TransactionDto(
+				t.getId(), 
+				t.getDate(), 
+				t.getDomain(), 
+				t.getLocation(),
+				t.getValue(),
 				t.getTransactionCount());
 	}
 
