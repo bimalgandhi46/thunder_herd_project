@@ -41,14 +41,14 @@ public class TransactionController {
 		return service.getTransactionById(id);
 	}
 
-	@GetMapping(value = "/domain/{domain}", produces = "application/json")
+	@GetMapping(value = "/domain/{domain}/cache", produces = "application/json")
 	public PageResponse<TransactionDto> getByDomain(@PathVariable String domain, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		
 		return service.getByDomain(domain,page, size);
 	}
 
-	@GetMapping("/location/{location}")
+	@GetMapping(value="/location/{location}/nocache",produces = "application/json")
 	public PageResponse<TransactionDto> getByLocation( @PathVariable String location,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
