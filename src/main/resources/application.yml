@@ -14,8 +14,8 @@ spring:
 
   datasource:
     url: jdbc:postgresql://10.0.0.13:5432/bank_data
-    username: springbootappuser
-    password: Test1234
+    username: 
+    password: 
     driver-class-name: org.postgresql.Driver
 
     hikari:

@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Build and Push Docker Image
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Spring Boot project
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
