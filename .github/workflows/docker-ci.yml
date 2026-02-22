@@ -24,10 +24,10 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Log in to GitHub Container Registry
-        run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u bimalgandhi46 --password-stdin
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/bimalgandhi46/springbootapp:latest .
+        run: docker build -t ghcr.io/${{ github.repository_owner }}/springbootapp:latest .
 
       - name: Push Docker image
-        run: docker push ghcr.io/bimalgandhi46/springbootapp:latest
+        run: docker push ghcr.io/${{ github.repository_owner }}/springbootapp:latest
