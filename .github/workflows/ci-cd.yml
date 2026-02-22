@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Spring Boot project
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up JDK 17
@@ -20,14 +20,24 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Build Spring Boot JAR
+      - name: Build JAR
         run: mvn clean package -DskipTests
 
-      - name: Log in to GitHub Container Registry
+      - name: Log in to GHCR
         run: echo ${{ secrets.GHCR_TOKEN }} | docker login ghcr.io -u bimalgandhi46 --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/bimalgandhi46/springbootapp:latest .
+        run: docker build -t ghcr.io/bimalgandhi46/thunder-herd:latest .
 
       - name: Push Docker image
-        run: docker push ghcr.io/bimalgandhi46/springbootapp:latest
+        run: docker push ghcr.io/bimalgandhi46/thunder-herd:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Run Ansible deploy
+        run: |
+          cd /home/githubrunner/ansible/thunder-herd
+          ansible-playbook -i inventory deploy.yml
