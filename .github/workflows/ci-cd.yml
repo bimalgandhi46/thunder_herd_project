@@ -24,7 +24,7 @@ jobs:
         run: mvn clean package -DskipTests
 
       - name: Log in to GHCR
-        run: echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u bimalgandhi46 --password-stdin
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u bimalgandhi46 --password-stdin
 
       - name: Build Docker image
         run: docker build -t ghcr.io/bimalgandhi46/thunder-herd:latest .
