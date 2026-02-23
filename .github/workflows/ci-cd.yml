@@ -39,5 +39,6 @@ jobs:
     steps:
       - name: Run Ansible deploy
         run: |
-          cd /home/githubrunner/ansible/thunder-herd
-          ansible-playbook -i inventory deploy.yml
+          cd /home/githubrunner/ansible/ansible-cicd-springboot
+          ansible-playbook -i inventory/hosts.ini playbooks/deploy.yml \
+            --vault-password-file ~/.vault_pass.txt
