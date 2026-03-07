@@ -12,6 +12,22 @@ spring:
   application:
     name: bankapp
 
+  datasource:
+    url: jdbc:postgresql://10.0.0.13:5432/bank_data
+    username: springbootappuser
+    password: Test1234
+    driver-class-name: org.postgresql.Driver
+
+    hikari:
+      # Keep this conservative per instance; DB is your bottleneck
+      maximum-pool-size: 20      # was 30
+      minimum-idle: 10            # was 10
+      idle-timeout: 600000       # 10m – avoid aggressive churn
+      max-lifetime: 1800000      # 30m – below PG / network timeouts
+      connection-timeout: 30000  # 30s – fine
+      pool-name: HikariPool
+      leak-detection-threshold: 2000  # NEW – log if a connection is held > 2s
+
   jpa:
     enabled: false   # <--- CRITICAL: disables Hibernate/JPA completely
 
