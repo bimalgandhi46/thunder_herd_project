@@ -1,90 +1,40 @@
 server:
   port: 8080
 
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 20
-    accept-count: 2000
-    connection-timeout: 5000
-
 spring:
-  application:
-    name: bankapp
-
   datasource:
-    url: jdbc:postgresql://10.0.0.13:5432/bank_data
-    username: springbootappuser
-    password: Test1234
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
-    hikari:
-      # Keep this conservative per instance; DB is your bottleneck
-      maximum-pool-size: 20      # was 30
-      minimum-idle: 10            # was 10
-      idle-timeout: 600000       # 10m – avoid aggressive churn
-      max-lifetime: 1800000      # 30m – below PG / network timeouts
-      connection-timeout: 30000  # 30s – fine
-      pool-name: HikariPool
-      leak-detection-threshold: 2000  # NEW – log if a connection is held > 2s
-
   jpa:
-    enabled: false   # <--- CRITICAL: disables Hibernate/JPA completely
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   data:
     redis:
       sentinel:
-        master: mymaster
-        nodes:
-          - 10.0.0.2:26379
-          - 10.0.0.3:26379
-          - 10.0.0.4:26379
-
-      password:
+        master: ${REDIS_MASTER:mymaster}
+        nodes: ${REDIS_SENTINEL_NODES:10.0.0.2:26379,10.0.0.3:26379,10.0.0.4:26379}
+      password: ${REDIS_PASSWORD:}
       timeout: 3s
-
-      lettuce:
-        read-from: replica-preferred
-        pool:
-          max-active: 200
-          max-idle: 50
-          min-idle: 20
-          time-between-eviction-runs: 60s
-
-  cache:
-    type: redis
-    redis:
-      time-to-live: 600000
-      cache-null-values: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics,prometheus
-
-  endpoint:
-    health:
-      show-details: always
-
-  metrics:
-    enable:
-      executor: true
-      http: true
-      tomcat: true
-      jvm: true
-
-    distribution:
-      percentiles-histogram:
-        "[http.server.requests]": true
-        "[executor]": true
-
-      percentiles:
-        "[http.server.requests]": 0.5,0.95,0.99
 
 logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    org.springframework.data.redis: INFO
-    io.lettuce.core: INFO
+    org.hibernate.SQL: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,loggers
+  endpoint:
+    health:
+      show-details: always
