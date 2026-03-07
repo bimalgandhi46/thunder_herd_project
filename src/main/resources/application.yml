@@ -12,6 +12,9 @@ spring:
   application:
     name: bankapp
 
+  jpa:
+    enabled: false   # <--- CRITICAL: disables Hibernate/JPA completely
+
   data:
     redis:
       sentinel:
