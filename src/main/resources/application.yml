@@ -19,10 +19,22 @@ spring:
   data:
     redis:
       sentinel:
-        master: ${REDIS_MASTER:mymaster}
-        nodes: ${REDIS_SENTINEL_NODES:10.0.0.2:26379,10.0.0.3:26379,10.0.0.4:26379}
-      password: ${REDIS_PASSWORD:}
+        master: mymaster
+        nodes:
+          - 10.0.0.2:26379
+          - 10.0.0.3:26379
+          - 10.0.0.4:26379
+
+      password:        # explicit empty – OK for no auth
       timeout: 3s
+
+      lettuce:
+        read-from: replica-preferred
+        pool:
+          max-active: 200
+          max-idle: 50
+          min-idle: 20
+          time-between-eviction-runs: 60s
 
 logging:
   level:
