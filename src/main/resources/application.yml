@@ -3,7 +3,7 @@ server:
 
   tomcat:
     threads:
-      max: 200      # was 300 – too many vs DB connections
+      max: 200
       min-spare: 20
     accept-count: 2000
     connection-timeout: 5000
@@ -11,30 +11,6 @@ server:
 spring:
   application:
     name: bankapp
-
-  datasource:
-    url: jdbc:postgresql://10.0.0.13:5432/bank_data
-    username: springbootappuser
-    password: Test1234
-    driver-class-name: org.postgresql.Driver
-
-    hikari:
-      # Keep this conservative per instance; DB is your bottleneck
-      maximum-pool-size: 20      # was 30
-      minimum-idle: 10            # was 10
-      idle-timeout: 600000       # 10m – avoid aggressive churn
-      max-lifetime: 1800000      # 30m – below PG / network timeouts
-      connection-timeout: 30000  # 30s – fine
-      pool-name: HikariPool
-      leak-detection-threshold: 2000  # NEW – log if a connection is held > 2s
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        format_sql: true
-    show-sql: false
 
   data:
     redis:
@@ -45,7 +21,7 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
-      password:        # explicit empty – OK for no auth
+      password:
       timeout: 3s
 
       lettuce:
@@ -61,6 +37,7 @@ spring:
     redis:
       time-to-live: 600000
       cache-null-values: false
+
 management:
   endpoints:
     web:
@@ -73,7 +50,6 @@ management:
 
   metrics:
     enable:
-      jdbc: true
       executor: true
       http: true
       tomcat: true
@@ -82,7 +58,6 @@ management:
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-        "[jdbc.connections]": true
         "[executor]": true
 
       percentiles:
@@ -92,6 +67,5 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    org.hibernate.SQL: DEBUG
     org.springframework.data.redis: INFO
     io.lettuce.core: INFO
