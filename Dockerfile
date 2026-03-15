@@ -14,5 +14,4 @@ ENV JAVA_TOOL_OPTIONS="-javaagent:/app/opentelemetry-javaagent.jar \
  -Dotel.exporter.otlp.protocol=http/protobuf \
  -Dotel.resource.attributes=service.name=springbootapp"
 
-# Start Spring Boot normally
 ENTRYPOINT ["java", "-jar", "app.jar"]
