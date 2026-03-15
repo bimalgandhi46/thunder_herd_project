@@ -25,7 +25,7 @@ spring:
           - 10.0.0.3:26379
           - 10.0.0.4:26379
 
-      password:        # explicit empty – OK for no auth
+      password:
       timeout: 3s
 
       lettuce:
@@ -46,7 +46,21 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics,loggers
+        include: "*"
+
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
