@@ -2,6 +2,9 @@ server:
   port: 8080
 
 spring:
+  application:
+    name: cache
+
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
@@ -24,10 +27,8 @@ spring:
           - 10.0.0.2:26379
           - 10.0.0.3:26379
           - 10.0.0.4:26379
-
       password:
       timeout: 3s
-
       lettuce:
         read-from: replica-preferred
         pool:
@@ -47,13 +48,11 @@ management:
     web:
       exposure:
         include: "*"
-
   endpoint:
     health:
       show-details: always
     prometheus:
       enabled: true
-
   metrics:
     distribution:
       percentiles-histogram:
