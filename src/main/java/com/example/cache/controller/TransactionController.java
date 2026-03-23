@@ -1,5 +1,6 @@
 package com.example.cache.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,35 +26,35 @@ public class TransactionController {
 	}
 
 	@GetMapping
-	public PageResponse<TransactionDto> getAll(@RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<PageResponse<TransactionDto>> getAll(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 
-		return service.getAllTransactions(page, size);
+		return ResponseEntity.ok(service.getAllTransactions(page, size));
 	}
 
 	@GetMapping("/{id}")
-	public TransactionDto getById(@PathVariable Long id) {
-		return service.getTransactionById(id);
+	public ResponseEntity<TransactionDto> getById(@PathVariable Long id) {
+		return ResponseEntity.ok(service.getTransactionById(id));
 	}
 
 	@GetMapping(value = "/domain/{domain}/cache", produces = "application/json")
-	public PageResponse<TransactionDto> getByDomain(@PathVariable String domain, @RequestParam(defaultValue = "0") int page,
+	public ResponseEntity<PageResponse<TransactionDto>> getByDomain(@PathVariable String domain, @RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
 		
-		return service.getByDomain(domain,page, size);
+		return ResponseEntity.ok(service.getByDomain(domain,page, size));
 	}
 
 	@GetMapping(value="/location/{location}/nocache",produces = "application/json")
-	public PageResponse<TransactionDto> getByLocation( @PathVariable String location,
+	public ResponseEntity<PageResponse<TransactionDto>> getByLocation( @PathVariable String location,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-		return service.getByLocation(location, page,size);
+		return ResponseEntity.ok(service.getByLocation(location, page,size));
 	}
 
 	@PostMapping
-	public TransactionDto create(@RequestBody TransactionDto dto) {
-		return service.saveTransaction(dto);
+	public ResponseEntity<TransactionDto> create(@RequestBody TransactionDto dto) {
+		return ResponseEntity.ok(service.saveTransaction(dto));
 	}
 	@DeleteMapping("/{id}")
 	public void delete(@PathVariable Long id) {
