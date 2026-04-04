@@ -1,50 +1,57 @@
 server:
   port: 8080
-  tomcat:
-    threads:
-      max: 200
-      min-spare: 20
 
 spring:
-  application:
-    name: thunder-herd-service
-
   datasource:
-    url: jdbc:postgresql://localhost:5432/transactions
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-        jdbc:
-          batch_size: 50
-    show-sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  redis:
-    host: localhost
-    port: 6379
-    timeout: 2000ms
+  data:
+    redis:
+      sentinel:
+        master: mymaster
+        nodes:
+          - 10.0.0.2:26379
+          - 10.0.0.3:26379
+          - 10.0.0.4:26379
+
+      password:
+      timeout: 3s
+
+      lettuce:
+        read-from: replica-preferred
+        pool:
+          max-active: 200
+          max-idle: 50
+          min-idle: 20
+          time-between-eviction-runs: 60s
 
 logging:
   level:
     root: INFO
-    com.example.cache: DEBUG
     org.springframework.web: INFO
-    io.github.resilience4j: DEBUG
+    org.hibernate.SQL: INFO
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics,prometheus
+
   endpoint:
     health:
       show-details: always
+
   metrics:
     tags:
       application: thunder-herd-service
@@ -55,4 +62,4 @@ resilience4j:
       default:
         sliding-window-type: COUNT_BASED
         sliding-window-size: 50
-        failure-rate-threshold:
+        failure-rate-threshold: 50.0
