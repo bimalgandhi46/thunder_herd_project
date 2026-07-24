@@ -29,7 +29,7 @@ public class TransactionController {
 	public ResponseEntity<PageResponse<TransactionDto>> getAll(@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "2000000") int size) {
 
-		return ResponseEntity.ok(service.getAllTransactions(page, size));
+		 return ResponseEntity.ok(service.getAllTransactions(page, size));
 	}
 
 	@GetMapping("/{id}")
